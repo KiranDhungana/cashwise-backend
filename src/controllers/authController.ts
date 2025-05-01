@@ -6,6 +6,7 @@ import { generateToken } from "../utils/generateToken";
 // NOTE: we explicitly type these as RequestHandler
 export const signup: RequestHandler = async (req, res, next) => {
   try {
+    console.log(req.body, "data");
     const { name, email, password } = req.body;
     const existing = await prisma.user.findUnique({ where: { email } });
     if (existing) {

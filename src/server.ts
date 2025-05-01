@@ -2,11 +2,18 @@ import express from "express";
 import dotenv from "dotenv";
 import authRoutes from "./routes/authRoutes";
 import { prisma } from "./prismaClient";
+import cors from "cors";
 
 dotenv.config();
 const app = express();
-
 app.use(express.json());
+
+app.use(
+  cors({
+    origin: "http://localhost:3000", // or your deployed frontend URL
+    credentials: true, // if using cookies or sessions
+  })
+);
 
 // health-check
 app.get("/", (_req, res) => {
