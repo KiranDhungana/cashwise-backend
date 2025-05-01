@@ -27,7 +27,6 @@ export const protect: RequestHandler = async (req, res, next) => {
       return;
     }
 
-    // Cast to any so TS won’t complain
     (req as any).user = user;
 
     next();

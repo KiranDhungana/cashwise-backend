@@ -10,7 +10,9 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: "http://localhost:3000", // or your deployed frontend URL
+    origin:
+      // "http://localhost:3000",
+      "https://cashwise-backend-6.onrender.com",
     credentials: true, // if using cookies or sessions
   })
 );
