@@ -12,7 +12,7 @@ app.use(
   cors({
     origin:
       // "http://localhost:3000",
-      "https://cashwise-backend-6.onrender.com",
+      "https://cashwise-uzly.vercel.app",
     credentials: true, // if using cookies or sessions
   })
 );
