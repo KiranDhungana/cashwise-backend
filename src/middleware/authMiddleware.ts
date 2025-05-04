@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 interface JwtPayload {
-  id: string;
+  id: number;
 }
 
 export const protect: RequestHandler = async (req, res, next) => {
