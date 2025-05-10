@@ -1,0 +1,51 @@
+# docker-compose.yml
+# version: "3.9"
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: cashwise_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: cbwqynbY984855!
+      POSTGRES_DB: mydb
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: cashwise_backend
+    restart: always
+    working_dir: /app
+    volumes:
+      - .:/app # mounts your code into /app
+      - /app/node_modules # keeps container’s node_modules
+    ports:
+      - "3001:4000" # host:container
+    depends_on:
+      - postgres
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://postgres:cbwqynbY984855!@postgres:5432/mydb
+      CHOKIDAR_USEPOLLING: "true" # (helps nodemon detect file changes)
+    # Dockerfile.dev’s CMD runs `npm run dev`
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+
+volumes:
+  pgdata:

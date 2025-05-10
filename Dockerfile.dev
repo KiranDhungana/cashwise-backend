@@ -1,0 +1,17 @@
+
+# Dockerfile.dev
+FROM node:18
+WORKDIR /app
+
+# 1️⃣ Copy only package files so npm-install cache is valid
+COPY package*.json ./
+
+# 2️⃣ Copy your Prisma folder so `prisma generate` can find schema.prisma
+COPY prisma ./prisma
+
+# 3️⃣ Now install (this will run your postinstall → prisma generate)
+RUN npm install
+
+# 4️⃣ Expose & kick off dev mode (nodemon, ts-node, etc)
+EXPOSE 4000
+CMD ["npm", "run", "dev"]

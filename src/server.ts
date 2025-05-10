@@ -81,31 +81,33 @@ app.post("/api/exchange_public_token", async (req, res) => {
   }
 });
 
-app.post("/api/get_user_data", async (req, res) => {
-  const { access_token } = req.body;
-  console.log("test");
+app.post("/api/get_user_data", async (req: any, res: any) => {
+  const { access_token, start_date, end_date } = req.body;
+
+  if (!access_token) {
+    return res.status(400).json({ error: "Missing access_token" });
+  }
+
   try {
-    // Fetch transactions
-    const transactionsResponse = await plaidClient.transactionsGet({
+    const transactionsRes = await plaidClient.transactionsGet({
       access_token,
-      start_date: "2022-01-01",
-      end_date: "2024-12-31",
+      start_date: start_date || "2022-01-01",
+      end_date: end_date || "2024-12-31",
     });
 
-    // Fetch account balances
-    const balanceResponse = await plaidClient.accountsBalanceGet({
-      access_token,
-    });
+    const balanceRes = await plaidClient.accountsBalanceGet({ access_token });
 
-    // Combine data
     const combinedData = {
-      transactions: transactionsResponse.data.transactions,
-      accounts: balanceResponse.data.accounts,
+      transactions: transactionsRes.data.transactions,
+      accounts: balanceRes.data.accounts,
     };
+
+    console.log("✅ Combined Plaid Data:", combinedData);
 
     res.json(combinedData);
   } catch (error: any) {
-    res.status(500).json({ error: error.message });
+    console.error("❌ Plaid API Error:", error.response?.data || error.message);
+    res.status(500).json({ error: "Failed to fetch data from Plaid" });
   }
 });
 

@@ -14,7 +14,10 @@ model User {
   password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  goals     UserGoal[]  
+  goals     UserGoal[] 
+  events      GroupEvent[]  // All vaults created by this user
+  posts      UserPost[]  // All vaults created by this user
+ 
 
 }
 
@@ -27,9 +30,35 @@ model UserGoal {
   amountSaved     Decimal   @default(0)
   goalAmount      Decimal
   daysLeft        Int?
-  frequencyLabel  String?
+  frequencyLabel  Int
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
   @@index([userId])
+}
+
+model GroupEvent {
+  id              String   @id @default(cuid())
+  title           String
+  description     String
+  totalAmount     Float
+  collectedAmount Float    @default(0)
+  perPerson       Float
+  dueDate         DateTime
+
+  uid             Int     
+  creator         User     @relation(fields: [uid], references: [id])
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model UserPost {
+  id              Int       @id @default(autoincrement())
+  uid             Int     
+  creator         User     @relation(fields: [uid], references: [id])
+  title           String
+  description     String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }

@@ -1,16 +1,14 @@
 import { RequestHandler } from "express";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { prisma } from "../prismaClient";
 import { generateToken } from "../utils/generateToken";
 
-// NOTE: we explicitly type these as RequestHandler
 export const signup: RequestHandler = async (req, res, next) => {
   try {
     console.log(req.body, "data");
     const { name, email, password } = req.body;
     const existing = await prisma.user.findUnique({ where: { email } });
     if (existing) {
-      // <— send error, then stop
       res.status(400).json({ message: "Email already in use" });
       return;
     }
@@ -21,7 +19,6 @@ export const signup: RequestHandler = async (req, res, next) => {
     });
 
     const token = generateToken(user.id);
-    // <— send success, then stop
     res.status(201).json({
       user: { id: user.id, name: user.name, email: user.email },
       token,
@@ -66,5 +63,19 @@ export const getMe: RequestHandler = async (req, res, next) => {
   } catch (err) {
     next(err);
     return;
+  }
+};
+
+export const getAllUsers: RequestHandler = async (req: any, res: any) => {
+  console.log("testing new ");
+  try {
+    const users = await prisma.user.findMany({
+      select: {
+        email: true,
+      },
+    });
+    res.json({ users });
+  } catch (err) {
+    res.json(err);
   }
 };
